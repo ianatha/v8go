@@ -37,6 +37,7 @@ typedef const v8ScriptCompilerCachedData* ScriptCompilerCachedDataPtr;
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 // ScriptCompiler::CompileOptions values
 extern const int ScriptCompilerNoCompileOptions;
@@ -169,6 +170,7 @@ extern RtnValue RunScript(ContextPtr ctx_ptr,
 extern RtnValue JSONParse(ContextPtr ctx_ptr, const char* str);
 const char* JSONStringify(ContextPtr ctx_ptr, ValuePtr val_ptr);
 extern ValuePtr ContextGlobal(ContextPtr ctx_ptr);
+extern void ContextAllowCodeGenerationFromStrings(ContextPtr ctx_ptr, bool allow);
 
 extern void TemplateFreeWrapper(TemplatePtr ptr);
 extern void TemplateSetValue(TemplatePtr ptr,

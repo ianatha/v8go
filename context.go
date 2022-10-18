@@ -121,6 +121,10 @@ func (c *Context) Close() {
 	c.ptr = nil
 }
 
+func (c *Context) AllowCodeGenerationFromStrings(allow bool) {
+	C.ContextAllowCodeGenerationFromStrings(c.ptr, C.bool(allow))
+}
+
 func (c *Context) register() {
 	ctxMutex.Lock()
 	r := ctxRegistry[c.ref]

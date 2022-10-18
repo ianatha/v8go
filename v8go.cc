@@ -769,6 +769,11 @@ ValuePtr ContextGlobal(ContextPtr ctx) {
   return tracked_value(ctx, val);
 }
 
+void ContextAllowCodeGenerationFromStrings(ContextPtr ctx_ptr, bool allow) {
+  LOCAL_CONTEXT(ctx_ptr);
+  local_ctx->AllowCodeGenerationFromStrings(allow);
+}
+
 /********** Value **********/
 
 #define LOCAL_VALUE(val)                   \

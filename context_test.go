@@ -152,6 +152,40 @@ func TestRegistryFromJSON(t *testing.T) {
 	}
 }
 
+func TestAllowCodeGenerationFromStrings(t *testing.T) {
+	t.Parallel()
+
+	iso := v8.NewIsolate()
+	defer iso.Dispose()
+
+	ctx := v8.NewContext(iso)
+	defer ctx.Close()
+
+	_, err := ctx.RunScript(`eval("10 + 1");`, "main.js")
+	fatalIf(t, err)
+
+	ctx.AllowCodeGenerationFromStrings(true)
+	_, err = ctx.RunScript(`eval("10 + 1");`, "main.js")
+	fatalIf(t, err)
+}
+
+func TestDisallowCodeGenerationFromStrings(t *testing.T) {
+	t.Parallel()
+
+	iso := v8.NewIsolate()
+	defer iso.Dispose()
+
+	ctx := v8.NewContext(iso)
+	defer ctx.Close()
+
+	ctx.AllowCodeGenerationFromStrings(false)
+
+	v, err := ctx.RunScript(`eval("10 + 1");`, "main.js")
+	if v != nil || err == nil || err.Error() != "EvalError: Code generation from strings disallowed for this context" {
+		t.Fatalf("expected eval to fail")
+	}
+}
+
 func BenchmarkContext(b *testing.B) {
 	b.ReportAllocs()
 	iso := v8.NewIsolate()
