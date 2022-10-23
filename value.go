@@ -21,6 +21,10 @@ type Value struct {
 	ctx *Context
 }
 
+func (v *Value) Context() *Context {
+	return v.ctx
+}
+
 // Valuer is an interface that reperesents anything that extends from a Value
 // eg. Object, Array, Date etc
 type Valuer interface {

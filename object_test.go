@@ -202,6 +202,29 @@ func TestObjectDelete(t *testing.T) {
 
 }
 
+func TestObjectGetPrototype(t *testing.T) {
+	t.Parallel()
+
+	ctx := v8.NewContext()
+	defer ctx.Isolate().Dispose()
+	defer ctx.Close()
+	val, _ := ctx.RunScript("let foo = 3.1415; foo", "")
+	// obj, _ := val.AsObject()
+	if val.Object().GetPrototype() != nil {
+		fmt.Printf("%v\n", val.Object().GetPrototype().DetailString())
+		t.Error("expected object to lack a prototype")
+	}
+
+	val, err := ctx.RunScript("class Foo { }; foo = new Foo(); foo", "")
+	if err != nil {
+		t.Error(err)
+	}
+	// obj, _ = val.AsObject()
+	if val.Object().GetPrototype() == nil {
+		t.Error("expected object to have a prototype")
+	}
+}
+
 func ExampleObject_global() {
 	iso := v8.NewIsolate()
 	defer iso.Dispose()

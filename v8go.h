@@ -282,6 +282,8 @@ int ObjectHas(ValuePtr ptr, const char* key);
 int ObjectHasIdx(ValuePtr ptr, uint32_t idx);
 int ObjectDelete(ValuePtr ptr, const char* key);
 int ObjectDeleteIdx(ValuePtr ptr, uint32_t idx);
+extern RtnValue ObjectGetPropertyNames(ValuePtr ptr, int mode, int filter, int IndexFilter);
+extern ValuePtr ObjectGetPrototype(ValuePtr ptr);
 
 extern RtnValue NewPromiseResolver(ContextPtr ctx_ptr);
 extern ValuePtr PromiseResolverGetPromise(ValuePtr ptr);

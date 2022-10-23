@@ -154,3 +154,56 @@ func (o *Object) Delete(key string) bool {
 func (o *Object) DeleteIdx(idx uint32) bool {
 	return C.ObjectDeleteIdx(o.ptr, C.uint32_t(idx)) != 0
 }
+
+type KeyCollectionMode int
+
+const (
+	OwnOnly           KeyCollectionMode = 0
+	IncludePrototypes KeyCollectionMode = 1
+)
+
+type PropertyFilter int
+
+const (
+	ALL_PROPERTIES    PropertyFilter = 0
+	ONLY_WRITABLE     PropertyFilter = 1
+	ONLY_ENUMERABLE   PropertyFilter = 2
+	ONLY_CONFIGURABLE PropertyFilter = 4
+	SKIP_STRINGS      PropertyFilter = 8
+	SKIP_SYMBOLS      PropertyFilter = 16
+)
+
+type IndexFilter int
+
+const (
+	IncludeIndices IndexFilter = 0
+	SkipIndices    IndexFilter = 1
+)
+
+func (o *Object) GetPropertyNames(keyCollectionMode KeyCollectionMode, propertyFilter PropertyFilter, indexFilter IndexFilter) []string {
+	rtn := C.ObjectGetPropertyNames(o.ptr, C.int(keyCollectionMode), C.int(propertyFilter), C.int(indexFilter))
+	val, err := valueResult(o.ctx, rtn)
+	if err != nil {
+		panic(err)
+	}
+	var res []string
+	var index = 0
+	for val.Object().HasIdx(uint32(index)) {
+		val, err := val.Object().GetIdx(uint32(index))
+		if err != nil {
+			panic(err)
+		}
+		res = append(res, val.String())
+		index++
+	}
+	return res
+}
+
+func (o *Object) GetOwnPropertyNames() []string {
+	return o.GetPropertyNames(OwnOnly, ALL_PROPERTIES, IncludeIndices)
+}
+
+func (o *Object) GetPrototype() *Value {
+	rtn := C.ObjectGetPrototype(o.ptr)
+	return &Value{rtn, o.ctx}
+}

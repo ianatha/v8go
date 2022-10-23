@@ -1411,6 +1411,42 @@ int ObjectDeleteIdx(ValuePtr ptr, uint32_t idx) {
   return obj->Delete(local_ctx, idx).ToChecked();
 }
 
+RtnValue ObjectGetPropertyNames(ValuePtr ptr,
+  int mode,
+  int filter,
+  int index_filter
+) {
+  LOCAL_OBJECT(ptr);
+  RtnValue rtn = {};
+  Local<Array> result = obj->GetPropertyNames(local_ctx,
+    static_cast<v8::KeyCollectionMode>(mode),
+    static_cast<v8::PropertyFilter>(filter),
+    static_cast<v8::IndexFilter>(index_filter)
+  ).ToLocalChecked();
+
+  m_value* new_val = new m_value;
+  new_val->iso = iso;
+  new_val->ctx = ctx;
+  new_val->ptr = Persistent<Value, CopyablePersistentTraits<Value>>(iso, result);
+
+  rtn.value =tracked_value(ctx, new_val);
+  return rtn;
+}
+
+ValuePtr ObjectGetPrototype(ValuePtr ptr) {
+  LOCAL_OBJECT(ptr);
+
+  Local<Value> result = obj->GetPrototype();
+
+  m_value* new_val = new m_value;
+  new_val->iso = iso;
+  new_val->ctx = ctx;
+  new_val->ptr =
+      Persistent<Value, CopyablePersistentTraits<Value>>(iso, result);
+
+  return tracked_value(ctx, new_val);
+}
+
 /********** Promise **********/
 
 RtnValue NewPromiseResolver(ContextPtr ctx) {
